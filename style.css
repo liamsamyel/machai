@@ -525,3 +525,7 @@ body {
     animation: none;
   }
 }
+
+.final-scene__ask {
+  margin-top: -0.5rem;
+}

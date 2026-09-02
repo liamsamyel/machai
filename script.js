@@ -458,9 +458,29 @@ function runFinalGalaxyScene() {
   finalScene.classList.add("is-visible");
   finalScene.setAttribute("aria-hidden", "false");
 
-  const preLines = finalScene.querySelectorAll(".final-line");
-  preLines.forEach((line, i) => {
+  const prelinesEl = document.getElementById("prelines");
+  const asklinesEl = document.getElementById("asklines");
+  const introLines = prelinesEl.querySelectorAll(".final-line");
+  const askLines = asklinesEl.querySelectorAll(".final-line");
+
+  // reveal the intro lines one by one
+  introLines.forEach((line, i) => {
     setTimeout(() => line.classList.add("is-visible"), 800 + i * 1900);
+  });
+
+  const introDoneDelay = 800 + introLines.length * 1900 + 1500;
+
+  // fade the intro lines out
+  setTimeout(() => {
+    prelinesEl.style.transition = "opacity 2s ease";
+    prelinesEl.style.opacity = "0";
+  }, introDoneDelay);
+
+  const askStartDelay = introDoneDelay + 2200;
+
+  // reveal the ask lines, staggered
+  askLines.forEach((line, i) => {
+    setTimeout(() => line.classList.add("is-visible"), askStartDelay + i * 1900);
   });
 
   const finalMessageEl = document.getElementById("finalScene").querySelector(".final-scene__message");
@@ -468,7 +488,7 @@ function runFinalGalaxyScene() {
   document.getElementById("finalSignatureName").textContent = settings.myName;
 
   const stayButton = document.getElementById("stayButton");
-  const revealDelay = 800 + preLines.length * 1900 + 1400;
+  const revealDelay = askStartDelay + askLines.length * 1900 + 1400;
 
   setTimeout(() => {
     finalMessageEl.classList.add("is-visible");
