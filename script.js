@@ -188,7 +188,7 @@ function drawSpecialStars() {
     ctx.fill();
   }
 }
-
+//asbdjvh
 function getConstellationEdges() {
   const edges = [];
   for (let i = 0; i < state.specialStars.length - 1; i++) {
