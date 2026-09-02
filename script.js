@@ -439,17 +439,17 @@ function triggerCompletionSequence() {
 
   const lines = completionEl.querySelectorAll(".completion-line");
   lines.forEach((line, i) => {
-    setTimeout(() => line.classList.add("is-visible"), 700 + i * 2200);
+    setTimeout(() => line.classList.add("is-visible"), 500 + i * 1400);
   });
 
-  const totalDelay = 700 + lines.length * 2200 + 1800;
+  const totalDelay = 500 + lines.length * 1400 + 1200;
   setTimeout(() => {
-    completionEl.style.transition = "opacity 2s ease";
+    completionEl.style.transition = "opacity 1.5s ease";
     completionEl.style.opacity = "0";
     setTimeout(() => {
       completionEl.classList.remove("is-visible");
       runFinalGalaxyScene();
-    }, 2000);
+    }, 1500);
   }, totalDelay);
 }
 
@@ -463,24 +463,21 @@ function runFinalGalaxyScene() {
   const introLines = prelinesEl.querySelectorAll(".final-line");
   const askLines = asklinesEl.querySelectorAll(".final-line");
 
-  // reveal the intro lines one by one
   introLines.forEach((line, i) => {
-    setTimeout(() => line.classList.add("is-visible"), 800 + i * 1900);
+    setTimeout(() => line.classList.add("is-visible"), 500 + i * 1300);
   });
 
-  const introDoneDelay = 800 + introLines.length * 1900 + 1500;
+  const introDoneDelay = 500 + introLines.length * 1300 + 1000;
 
-  // fade the intro lines out
   setTimeout(() => {
-    prelinesEl.style.transition = "opacity 2s ease";
+    prelinesEl.style.transition = "opacity 1.5s ease";
     prelinesEl.style.opacity = "0";
   }, introDoneDelay);
 
-  const askStartDelay = introDoneDelay + 2200;
+  const askStartDelay = introDoneDelay + 1700;
 
-  // reveal the ask lines, staggered
   askLines.forEach((line, i) => {
-    setTimeout(() => line.classList.add("is-visible"), askStartDelay + i * 1900);
+    setTimeout(() => line.classList.add("is-visible"), askStartDelay + i * 1400);
   });
 
   const finalMessageEl = document.getElementById("finalScene").querySelector(".final-scene__message");
@@ -488,7 +485,7 @@ function runFinalGalaxyScene() {
   document.getElementById("finalSignatureName").textContent = settings.myName;
 
   const stayButton = document.getElementById("stayButton");
-  const revealDelay = askStartDelay + askLines.length * 1900 + 1400;
+  const revealDelay = askStartDelay + askLines.length * 1400 + 1000;
 
   setTimeout(() => {
     finalMessageEl.classList.add("is-visible");
@@ -497,7 +494,7 @@ function runFinalGalaxyScene() {
   setTimeout(() => {
     stayButton.classList.add("is-visible");
     stayButton.removeAttribute("aria-hidden");
-  }, revealDelay + 2000);
+  }, revealDelay + 1500);
 }
 
 const stayButton = document.getElementById("stayButton");
