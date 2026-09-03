@@ -1,3 +1,7 @@
+// ==========================================
+// PERSONALIZATION — EDIT THESE
+// ==========================================
+
 const settings = {
   herName: "Risecel",
   myName: "Liam",
@@ -53,6 +57,10 @@ const reasons = [
     {title: "Choosing you", message: "They say love is a choice, and that's my reason why. Out of everyone I could've chosen, I chose you, and I would choose you again and again." }
 ];
 
+// ==========================================
+// STATE
+// ==========================================
+
 const canvas = document.getElementById("skyCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -77,6 +85,10 @@ const state = {
   time: 0,
 };
 
+// ==========================================
+// CANVAS SETUP / RESIZE
+// ==========================================
+
 function resizeCanvas() {
   state.width = window.innerWidth;
   state.height = window.innerHeight;
@@ -86,6 +98,10 @@ function resizeCanvas() {
   canvas.style.height = state.height + "px";
   ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 }
+
+// ==========================================
+// BACKGROUND STAR FIELD
+// ==========================================
 
 function createBackgroundStars() {
   state.backgroundStars = [];
@@ -103,7 +119,7 @@ function createBackgroundStars() {
   }
 }
 
-function drawBackgroundStars(delta) {
+function drawBackgroundStars() {
   for (const star of state.backgroundStars) {
     const twinkle = state.reducedMotion
       ? 0
@@ -118,6 +134,10 @@ function drawBackgroundStars(delta) {
     ctx.fill();
   }
 }
+
+// ==========================================
+// SPECIAL CLICKABLE STARS
+// ==========================================
 
 function createSpecialStars() {
   state.specialStars = [];
@@ -151,15 +171,15 @@ function createSpecialStars() {
   reasons.forEach((reason, i) => {
     const pos = positions[i] || { x: Math.random() * state.width, y: Math.random() * state.height };
     state.specialStars.push({
-        id: i,
-        x: pos.x,
-        y: pos.y,
-        baseR: Math.random() * 1.1 + 3.2,
-        hoverT: 0,
-        discoveredT: 0,
-        discovered: false,
-        phase: Math.random() * Math.PI * 2,
-        reason,
+      id: i,
+      x: pos.x,
+      y: pos.y,
+      baseR: Math.random() * 1.1 + 3.2,
+      hoverT: 0,
+      discoveredT: 0,
+      discovered: false,
+      phase: Math.random() * Math.PI * 2,
+      reason,
     });
   });
 }
@@ -169,26 +189,50 @@ function drawSpecialStars() {
     const px = star.x + state.parallax.x * 0.9;
     const py = star.y + state.parallax.y * 0.9;
 
-    const twinkle = state.reducedMotion ? 0 : Math.sin(state.time * 0.01 + star.phase) * 0.15;
-    const glowStrength = 0.35 + star.discoveredT * 0.5 + star.hoverT * 0.4 + twinkle;
-    const radius = star.baseR + star.hoverT * 1.8 + star.discoveredT * 0.6;
+    const pulse = state.reducedMotion ? 0 : Math.sin(state.time * 0.012 + star.phase) * 0.5 + 0.5;
+    const glowStrength = 0.6 + star.discoveredT * 0.55 + star.hoverT * 0.45 + pulse * 0.25;
+    const radius = star.baseR + star.hoverT * 2 + star.discoveredT * 0.7;
 
-    const glowRadius = radius * (9 + star.discoveredT * 4 + star.hoverT * 3);
+    const glowRadius = radius * (10 + star.discoveredT * 5 + star.hoverT * 4 + pulse * 2);
     const gradient = ctx.createRadialGradient(px, py, 0, px, py, glowRadius);
-    gradient.addColorStop(0, `rgba(185, 196, 238, ${0.35 * glowStrength})`);
+    gradient.addColorStop(0, `rgba(185, 196, 238, ${0.4 * glowStrength})`);
+    gradient.addColorStop(0.4, `rgba(185, 196, 238, ${0.14 * glowStrength})`);
     gradient.addColorStop(1, "rgba(185, 196, 238, 0)");
     ctx.beginPath();
     ctx.fillStyle = gradient;
     ctx.arc(px, py, glowRadius, 0, Math.PI * 2);
     ctx.fill();
 
+    const flareLength = radius * (3.4 + star.hoverT * 2.2 + pulse * 0.6);
+    const flareAlpha = 0.32 * glowStrength;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.strokeStyle = `rgba(244, 242, 234, ${flareAlpha})`;
+    ctx.lineWidth = 0.9;
     ctx.beginPath();
-    ctx.fillStyle = `rgba(244, 242, 234, ${0.75 + glowStrength * 0.25})`;
+    ctx.moveTo(-flareLength, 0);
+    ctx.lineTo(flareLength, 0);
+    ctx.moveTo(0, -flareLength);
+    ctx.lineTo(0, flareLength);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(238, 236, 250, ${0.85 + glowStrength * 0.15})`;
     ctx.arc(px, py, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+    ctx.arc(px, py, radius * 0.4, 0, Math.PI * 2);
     ctx.fill();
   }
 }
-//asbdjvh
+
+// ==========================================
+// CONSTELLATION
+// ==========================================
+
 function getConstellationEdges() {
   const edges = [];
   for (let i = 0; i < state.specialStars.length - 1; i++) {
@@ -218,6 +262,10 @@ function drawConstellation() {
     ctx.stroke();
   }
 }
+
+// ==========================================
+// PARTICLE BURST
+// ==========================================
 
 function spawnParticles(x, y) {
   const count = state.reducedMotion ? 0 : 14;
@@ -255,6 +303,10 @@ function updateAndDrawParticles() {
     ctx.fill();
   }
 }
+
+// ==========================================
+// SHOOTING STARS
+// ==========================================
 
 function maybeSpawnShootingStar() {
   if (state.reducedMotion) return;
@@ -299,6 +351,10 @@ function updateAndDrawShootingStars() {
     ctx.stroke();
   }
 }
+
+// ==========================================
+// POINTER / HOVER / CLICK HANDLING
+// ==========================================
 
 function getSpecialStarAt(x, y, radius) {
   let closest = null;
@@ -363,6 +419,10 @@ canvas.addEventListener(
 
 document.body.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 
+// ==========================================
+// REASON MODAL
+// ==========================================
+
 const modal = document.getElementById("reasonModal");
 const modalCard = modal.querySelector(".modal__card");
 const modalTitle = document.getElementById("modalTitle");
@@ -391,6 +451,10 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
 });
 
+// ==========================================
+// DISCOVERY TRACKING
+// ==========================================
+
 const discoveredCountEl = document.getElementById("discoveredCount");
 const totalCountEl = document.getElementById("totalCount");
 const discoveryCounterEl = document.getElementById("discoveryCounter");
@@ -413,6 +477,10 @@ function onStarActivated(star) {
   openModal(star);
 }
 
+// ==========================================
+// OPENING SEQUENCE
+// ==========================================
+
 function runOpeningSequence() {
   const line1 = document.getElementById("openingLine1");
   const line2 = document.getElementById("openingLine2");
@@ -431,6 +499,10 @@ function runOpeningSequence() {
     line2.classList.add("is-faded");
   }, 7200);
 }
+
+// ==========================================
+// COMPLETION SEQUENCE
+// ==========================================
 
 function triggerCompletionSequence() {
   const completionEl = document.getElementById("completionSequence");
@@ -453,49 +525,80 @@ function triggerCompletionSequence() {
   }, totalDelay);
 }
 
+// ==========================================
+// FINAL GALAXY SCENE
+// One block fully fades out before the next fades in.
+// ==========================================
+
 function runFinalGalaxyScene() {
   const finalScene = document.getElementById("finalScene");
   finalScene.classList.add("is-visible");
   finalScene.setAttribute("aria-hidden", "false");
 
   const prelinesEl = document.getElementById("prelines");
+  const messageEl = finalScene.querySelector(".final-scene__message");
   const asklinesEl = document.getElementById("asklines");
+  const stayButton = document.getElementById("stayButton");
+
   const introLines = prelinesEl.querySelectorAll(".final-line");
   const askLines = asklinesEl.querySelectorAll(".final-line");
 
-  introLines.forEach((line, i) => {
-    setTimeout(() => line.classList.add("is-visible"), 500 + i * 1300);
-  });
-
-  const introDoneDelay = 500 + introLines.length * 1300 + 1000;
-
-  setTimeout(() => {
-    prelinesEl.style.transition = "opacity 1.5s ease";
-    prelinesEl.style.opacity = "0";
-  }, introDoneDelay);
-
-  const askStartDelay = introDoneDelay + 1700;
-
-  askLines.forEach((line, i) => {
-    setTimeout(() => line.classList.add("is-visible"), askStartDelay + i * 1400);
-  });
-
-  const finalMessageEl = document.getElementById("finalScene").querySelector(".final-scene__message");
   document.getElementById("finalMessage").textContent = settings.finalMessage;
   document.getElementById("finalSignatureName").textContent = settings.myName;
 
-  const stayButton = document.getElementById("stayButton");
-  const revealDelay = askStartDelay + askLines.length * 1400 + 1000;
+  // Fades a block's lines in one by one, holds, then fades the whole block out.
+  // Returns the time (ms) at which the block is fully gone.
+  function playBlock(el, lines, startDelay, staggerMs, holdMs, fadeMs) {
+    lines.forEach((line, i) => {
+      setTimeout(() => line.classList.add("is-visible"), startDelay + i * staggerMs);
+    });
 
+    const lastLineShownAt = startDelay + (lines.length - 1) * staggerMs;
+    const fadeOutStart = lastLineShownAt + holdMs;
+
+    setTimeout(() => {
+      el.style.transition = `opacity ${fadeMs}ms ease`;
+      el.style.opacity = "0";
+    }, fadeOutStart);
+
+    return fadeOutStart + fadeMs;
+  }
+
+  // --- Block 1: intro lines ---
+  const block1End = playBlock(prelinesEl, introLines, 500, 1300, 1200, 1500);
+
+  // --- Block 2: final message + signature ---
+  const block2Start = block1End + 600;
   setTimeout(() => {
-    finalMessageEl.classList.add("is-visible");
-  }, revealDelay);
+    messageEl.classList.add("is-visible");
+  }, block2Start);
+
+  const block2FadeOutStart = block2Start + 3200;
+  setTimeout(() => {
+    messageEl.style.transition = "opacity 1500ms ease";
+    messageEl.style.opacity = "0";
+  }, block2FadeOutStart);
+
+  const block2End = block2FadeOutStart + 1500;
+
+  // --- Block 3: ask lines (stays on screen) ---
+  const block3Start = block2End + 600;
+  askLines.forEach((line, i) => {
+    setTimeout(() => line.classList.add("is-visible"), block3Start + i * 1400);
+  });
+
+  const block3LastLineShownAt = block3Start + (askLines.length - 1) * 1400;
+  const stayDelay = block3LastLineShownAt + 1800;
 
   setTimeout(() => {
     stayButton.classList.add("is-visible");
     stayButton.removeAttribute("aria-hidden");
-  }, revealDelay + 1500);
+  }, stayDelay);
 }
+
+// ==========================================
+// STAY A LITTLE LONGER
+// ==========================================
 
 const stayButton = document.getElementById("stayButton");
 stayButton.addEventListener("click", () => {
@@ -513,6 +616,10 @@ stayButton.addEventListener("click", () => {
   }, 2500);
 });
 
+// ==========================================
+// MUSIC
+// ==========================================
+
 const musicButton = document.getElementById("musicButton");
 const backgroundMusic = document.getElementById("backgroundMusic");
 backgroundMusic.src = settings.musicFile;
@@ -524,14 +631,16 @@ musicButton.addEventListener("click", () => {
     backgroundMusic.pause();
     isMusicPlaying = false;
   } else {
-    backgroundMusic.play().catch(() => {
-    });
+    backgroundMusic.play().catch(() => {});
     isMusicPlaying = true;
   }
   musicButton.setAttribute("aria-pressed", String(isMusicPlaying));
   musicButton.setAttribute("aria-label", isMusicPlaying ? "Pause music" : "Play music");
 });
 
+// ==========================================
+// MAIN RENDER LOOP
+// ==========================================
 
 function updateParallax() {
   state.mouse.x += (state.mouse.targetX - state.mouse.x) * 0.06;
@@ -578,6 +687,10 @@ function render() {
 
   requestAnimationFrame(render);
 }
+
+// ==========================================
+// INIT
+// ==========================================
 
 function init() {
   resizeCanvas();
