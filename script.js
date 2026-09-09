@@ -1,7 +1,3 @@
-// ==========================================
-// PERSONALIZATION — EDIT THESE
-// ==========================================
-
 const settings = {
   herName: "Risecel",
   myName: "Liam",
@@ -57,10 +53,6 @@ const reasons = [
     {title: "Choosing you", message: "They say love is a choice, and that's my reason why. Out of everyone I could've chosen, I chose you, and I would choose you again and again." }
 ];
 
-// ==========================================
-// STATE
-// ==========================================
-
 const canvas = document.getElementById("skyCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -85,10 +77,6 @@ const state = {
   time: 0,
 };
 
-// ==========================================
-// CANVAS SETUP / RESIZE
-// ==========================================
-
 function resizeCanvas() {
   state.width = window.innerWidth;
   state.height = window.innerHeight;
@@ -98,10 +86,6 @@ function resizeCanvas() {
   canvas.style.height = state.height + "px";
   ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 }
-
-// ==========================================
-// BACKGROUND STAR FIELD
-// ==========================================
 
 function createBackgroundStars() {
   state.backgroundStars = [];
@@ -134,10 +118,6 @@ function drawBackgroundStars() {
     ctx.fill();
   }
 }
-
-// ==========================================
-// SPECIAL CLICKABLE STARS
-// ==========================================
 
 function createSpecialStars() {
   state.specialStars = [];
@@ -229,10 +209,6 @@ function drawSpecialStars() {
   }
 }
 
-// ==========================================
-// CONSTELLATION
-// ==========================================
-
 function getConstellationEdges() {
   const edges = [];
   for (let i = 0; i < state.specialStars.length - 1; i++) {
@@ -262,10 +238,6 @@ function drawConstellation() {
     ctx.stroke();
   }
 }
-
-// ==========================================
-// PARTICLE BURST
-// ==========================================
 
 function spawnParticles(x, y) {
   const count = state.reducedMotion ? 0 : 14;
@@ -303,10 +275,6 @@ function updateAndDrawParticles() {
     ctx.fill();
   }
 }
-
-// ==========================================
-// SHOOTING STARS
-// ==========================================
 
 function maybeSpawnShootingStar() {
   if (state.reducedMotion) return;
@@ -352,9 +320,6 @@ function updateAndDrawShootingStars() {
   }
 }
 
-// ==========================================
-// POINTER / HOVER / CLICK HANDLING
-// ==========================================
 
 function getSpecialStarAt(x, y, radius) {
   let closest = null;
@@ -419,10 +384,6 @@ canvas.addEventListener(
 
 document.body.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 
-// ==========================================
-// REASON MODAL
-// ==========================================
-
 const modal = document.getElementById("reasonModal");
 const modalCard = modal.querySelector(".modal__card");
 const modalTitle = document.getElementById("modalTitle");
@@ -451,10 +412,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
 });
 
-// ==========================================
-// DISCOVERY TRACKING
-// ==========================================
-
 const discoveredCountEl = document.getElementById("discoveredCount");
 const totalCountEl = document.getElementById("totalCount");
 const discoveryCounterEl = document.getElementById("discoveryCounter");
@@ -477,10 +434,6 @@ function onStarActivated(star) {
   openModal(star);
 }
 
-// ==========================================
-// OPENING SEQUENCE
-// ==========================================
-
 function runOpeningSequence() {
   const line1 = document.getElementById("openingLine1");
   const line2 = document.getElementById("openingLine2");
@@ -499,10 +452,6 @@ function runOpeningSequence() {
     line2.classList.add("is-faded");
   }, 7200);
 }
-
-// ==========================================
-// COMPLETION SEQUENCE
-// ==========================================
 
 function triggerCompletionSequence() {
   const completionEl = document.getElementById("completionSequence");
@@ -525,11 +474,6 @@ function triggerCompletionSequence() {
   }, totalDelay);
 }
 
-// ==========================================
-// FINAL GALAXY SCENE
-// One block fully fades out before the next fades in.
-// ==========================================
-
 function runFinalGalaxyScene() {
   const finalScene = document.getElementById("finalScene");
   finalScene.classList.add("is-visible");
@@ -546,8 +490,6 @@ function runFinalGalaxyScene() {
   document.getElementById("finalMessage").textContent = settings.finalMessage;
   document.getElementById("finalSignatureName").textContent = settings.myName;
 
-  // Fades a block's lines in one by one, holds, then fades the whole block out.
-  // Returns the time (ms) at which the block is fully gone.
   function playBlock(el, lines, startDelay, staggerMs, holdMs, fadeMs) {
     lines.forEach((line, i) => {
       setTimeout(() => line.classList.add("is-visible"), startDelay + i * staggerMs);
@@ -564,10 +506,8 @@ function runFinalGalaxyScene() {
     return fadeOutStart + fadeMs;
   }
 
-  // --- Block 1: intro lines ---
   const block1End = playBlock(prelinesEl, introLines, 500, 1300, 1200, 1500);
 
-  // --- Block 2: final message + signature ---
   const block2Start = block1End + 600;
   setTimeout(() => {
     messageEl.classList.add("is-visible");
@@ -581,7 +521,6 @@ function runFinalGalaxyScene() {
 
   const block2End = block2FadeOutStart + 1500;
 
-  // --- Block 3: ask lines (stays on screen) ---
   const block3Start = block2End + 600;
   askLines.forEach((line, i) => {
     setTimeout(() => line.classList.add("is-visible"), block3Start + i * 1400);
@@ -595,10 +534,6 @@ function runFinalGalaxyScene() {
     stayButton.removeAttribute("aria-hidden");
   }, stayDelay);
 }
-
-// ==========================================
-// STAY A LITTLE LONGER
-// ==========================================
 
 const stayButton = document.getElementById("stayButton");
 stayButton.addEventListener("click", () => {
@@ -615,32 +550,6 @@ stayButton.addEventListener("click", () => {
     returnNote.removeAttribute("aria-hidden");
   }, 2500);
 });
-
-// ==========================================
-// MUSIC
-// ==========================================
-
-const musicButton = document.getElementById("musicButton");
-const backgroundMusic = document.getElementById("backgroundMusic");
-backgroundMusic.src = settings.musicFile;
-
-let isMusicPlaying = false;
-
-musicButton.addEventListener("click", () => {
-  if (isMusicPlaying) {
-    backgroundMusic.pause();
-    isMusicPlaying = false;
-  } else {
-    backgroundMusic.play().catch(() => {});
-    isMusicPlaying = true;
-  }
-  musicButton.setAttribute("aria-pressed", String(isMusicPlaying));
-  musicButton.setAttribute("aria-label", isMusicPlaying ? "Pause music" : "Play music");
-});
-
-// ==========================================
-// MAIN RENDER LOOP
-// ==========================================
 
 function updateParallax() {
   state.mouse.x += (state.mouse.targetX - state.mouse.x) * 0.06;
@@ -687,10 +596,6 @@ function render() {
 
   requestAnimationFrame(render);
 }
-
-// ==========================================
-// INIT
-// ==========================================
 
 function init() {
   resizeCanvas();
